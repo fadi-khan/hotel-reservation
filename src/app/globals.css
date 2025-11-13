@@ -1,2 +1,12 @@
 @import "tailwindcss";
 
+
+@keyframes subtle-ring {
+  0%, 100% { opacity: 0.55; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.03); }
+}
+
+.animate-subtle-ring {
+  animation: subtle-ring 1.6s ease-in-out infinite;
+}
+
