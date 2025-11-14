@@ -1,8 +1,8 @@
-
+import { HomeImageSlider } from "@/components/homeSlider/HomeImageSlider";
 export default function Home() {
     return (
-        <div>
-            
+        <div className=""> 
+            <HomeImageSlider/>
         </div>
     );
 };

@@ -29,7 +29,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased `}
       >
         <MainHeader setIsOpen={()=>setIsOpen(!isOpen)}/>
         <MobileSideBar isOpen={isOpen} setIsOpen={()=>setIsOpen(!isOpen)}/>

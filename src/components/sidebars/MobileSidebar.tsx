@@ -10,7 +10,7 @@ export const MobileSideBar = ({ isOpen, setIsOpen }: { isOpen: boolean; setIsOpe
       className={`fixed top-0 right-0 h-screen w-[65%] bg-blue-900 z-50 transform transition-transform duration-500 ease-in-out
       ${isOpen ? 'translate-x-0 pointer-events-auto' : 'translate-x-full pointer-events-none'}`}
     >
-      <div className=" px-8 my-8 text-white flex justify-between items-center border-b border-white">
+      <div className=" px-7 my-[34px] shadow-blue-600  shadow-sm text-white flex justify-between items-center border-b border-blue-900">
         <IoMdClose size={24} className="mb-7 border-2  rounded-full font-bold cursor-pointer items-center" onClick={setIsOpen}/>
       </div>
       <ul className="px-4 flex flex-col gro gap-5 text-white font-medium mt-20 text-start">
