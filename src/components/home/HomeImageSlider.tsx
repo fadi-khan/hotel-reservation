@@ -44,7 +44,7 @@ export const HomeImageSlider = () => {
   }, [sideImages.length]);
 
   return (
-    <div className="w-full bg-blue-800 lg:py-5 py-5">
+    <div className="w-full bg-blue-800 lg:pb-12  pb-5">
       <div className="relative mx-auto max-w-6xl h-[450px] px-6">
         {/* Left stack (overlapping with peek) */}
         <div className="absolute left-[10%] top-1/4 -translate-y-1/2 w-[150px]">
@@ -66,7 +66,7 @@ export const HomeImageSlider = () => {
           </div>
 
         </div>
-         <h1 className="hidden lg:block absolute top-[85%] left-[10%] -translate-x-1/2 -translate-y-1/2 text-white text-4xl font-bold"> Luxurious Rooms</h1>
+         <h1 className="hidden xl:block absolute top-[85%] left-[10%] -translate-x-1/2 -translate-y-1/2 text-white text-4xl font-bold"> Luxurious Rooms</h1>
 
 
         {/* Right stack (overlapping with peek) */}
@@ -90,10 +90,10 @@ export const HomeImageSlider = () => {
          
           
         </div>
-         <h1 className="hidden lg:block absolute top-[85%] -right-[15%] -translate-x-1/2 -translate-y-1/2 text-white text-4xl font-bold"> Affordable Prices</h1>
+         <h1 className="hidden xl:block absolute top-[85%] -right-[15%] -translate-x-1/2 -translate-y-1/2 text-white text-4xl font-bold"> Affordable Prices</h1>
 
         {/* Center slider (incoming slides in, current stays) */}
-        <div className="  absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[95%] h-[370px] lg:w-[420px] lg:h-[370px] border-2 border-white overflow-hidden rounded-xl shadow-lg shadow-blue-900">
+        <div className="  absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[95%] h-[300px] lg:w-[420px] lg:h-[300px] border-2 border-white overflow-hidden rounded-xl shadow-lg shadow-blue-900">
           {/* Current stays static */}
          
           <Image
@@ -101,8 +101,8 @@ export const HomeImageSlider = () => {
             src={sideImages[centerIdx]}
             alt="Center Current"
             width={600}
-            height={410}
-            className="object-cover w-[95%] h-[370px] lg:w-[420px] lg:h-[370px] absolute inset-0 z-10 "
+            height={300}
+            className="object-cover w-[95%] h-[300px] lg:w-[420px] lg:h-[300px] absolute inset-0 z-10 "
           />
           {/* Incoming slides in from right */}
           <Image
@@ -110,8 +110,8 @@ export const HomeImageSlider = () => {
             src={sideImages[(centerIdx + 1) % sideImages.length]}
             alt="Center Next"
             width={600}
-            height={410}
-            className={`object-cover w-[95%] h-[370px] lg:w-[420px] lg:h-[370px] absolute inset-0 ${
+            height={300}
+            className={`object-cover w-[95%] h-[300px] lg:w-[420px] lg:h-[300px] absolute inset-0 ${
               sliding
                 ? "z-20 transition-transform duration-700 translate-x-0"
                 : "-z-10 transition-none translate-x-full"

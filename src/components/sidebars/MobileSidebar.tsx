@@ -7,7 +7,7 @@ export const MobileSideBar = ({ isOpen, setIsOpen }: { isOpen: boolean; setIsOpe
   return (
     <div
       aria-hidden={!isOpen}
-      className={`fixed top-0 right-0 h-screen w-[65%] bg-blue-900 z-50 transform transition-transform duration-500 ease-in-out
+      className={`fixed top-0  z-50 right-0 h-screen w-[65%] bg-blue-900  transform transition-transform duration-500 ease-in-out
       ${isOpen ? 'translate-x-0 pointer-events-auto' : 'translate-x-full pointer-events-none'}`}
     >
       <div className=" px-7 my-[34px] shadow-blue-600  shadow-sm text-white flex justify-between items-center border-b border-blue-900">
