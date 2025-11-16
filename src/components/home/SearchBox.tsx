@@ -27,14 +27,15 @@ export const SearchBox = () => {
 
             <div className={`${isOpen ? " z-50" : "z-30"} relative bg-white  rounded-lg  mb-2 lg:mb-0  `}>
                <div className="flex items-center border p-3 rounded-lg lg:max-w-[300px] justify-between" onClick={() => setIsOpen(!isOpen)}>
-                <input className="focus:border-none border-none cursor-pointer outline-none" type="text" placeholder="Select Price"  value={startPrice!==0 && endPrice!==0 ? startPrice + " - " + endPrice : ""}/>
+                <input className="font-medium focus:border-none border-none cursor-pointer outline-none" type="text" placeholder="Select Price"  
+                value={startPrice!==0 && endPrice!==0 ? startPrice !== endPrice ? "Rs. " + startPrice + " - " + endPrice : "Rs. 10000+ "  : ""}/>
                 {!isOpen ? <FaChevronDown className="cursor-pointer text-blue-900" size={14} /> : <FaChevronUp className="cursor-pointer text-blue-900" size={14} /> }    
                </div>
                <div className={`z-50 absolute  mt-0.5 left-0  w-full  border border-blue-900 rounded   bg-white cursor-pointer ${isOpen ? "block" : "hidden"}`}>
                 {
                     Object.values(Pricelist)?.map((price) => (
                         <div className=" p-2 hover:bg-blue-900  hover:text-white font-medium   "onClick={() => handlePriceClick(price)}  key={price}>
-                            {price}
+                            {"Rs. "+ price}
                         </div>
                     ))
                 }
@@ -43,7 +44,7 @@ export const SearchBox = () => {
             <div className={`${isOpen ? " z-30" : "z-50"}`}>
                 <DatePicker
                 selected={startDate}
-                className="border lg:mb-0 mb-2 lg:w-fit w-full cursor-pointer bg-white focus:border-blue-600 focus:border-4 border-black  py-3 rounded-lg text-black lg:min-w-[300px]  lg:px-3 flex justify-center"
+                className="border lg:mb-0 mb-2 lg:w-fit  font-medium cursor-pointer bg-white focus:border-blue-600 focus:border-4 border-black px-2 py-3 rounded-lg text-black lg:min-w-[300px]  lg:px-3 flex justify-center"
                 calendarClassName=" shadow-xl rounded-full "
                 dayClassName={() => "cursor-pointer hover:text-white hover:bg-blue-900 rounded-full"}
                 wrapperClassName=""
@@ -80,7 +81,8 @@ export const SearchBox = () => {
                 }
             />
             </div>
-            <input type="button" value="Search" className="bg-white cursor-pointer text-blue-900 font-bold border border-white  h-[48px] px-6  rounded-lg"/>
+            <input type="button" value="Search" className="
+            hover:bg-blue-900 hover:text-white hover:border-white hover:border-2 bg-white cursor-pointer text-blue-900 font-bold border border-white  h-[48px] px-6  rounded-lg"/>
 
         </div>
     );
