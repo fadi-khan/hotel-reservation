@@ -1,14 +1,10 @@
 "use client"
 import { HomeImageSlider } from "@/components/home/HomeImageSlider";
-import { useState } from "react";
-import DatePicker from "react-datepicker";
-import { FaCalendarCheck, FaChevronLeft, FaChevronRight } from "react-icons/fa";
-import { DateRangeInput } from "../utils/DateRangeInput";
-import { FaCalendar } from "react-icons/fa6";
-import { AiOutlineCalendar } from "react-icons/ai";
-import { IoCalendarNumberOutline } from "react-icons/io5";
-import { MdOutlineCalendarViewDay } from "react-icons/md";
 import { SearchBox } from "@/components/home/SearchBox";
+export const Metadata = {
+    title: "Hotel Booking App",
+    description: "Hotel Booking ",
+}
 export default function Home() {
 
     
