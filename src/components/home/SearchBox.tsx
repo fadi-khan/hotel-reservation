@@ -23,9 +23,9 @@ export const SearchBox = () => {
         setIsOpen(false);
     };
     return (
-        <div className="rounded-lg flex items-center  flex-col lg:flex-row w-full bg-blue-800  p-5 select-none z-50">
+        <div className="rounded-lg flex items-center  flex-col lg:flex-row w-full bg-blue-800  p-5 select-none ">
 
-            <div className={`${isOpen ? " z-50" : "z-30"} relative bg-white  rounded-lg  mb-2 lg:mb-0  cursor-pointer`}>
+            <div className={`${isOpen ? " z-50" : ""} relative bg-white  rounded-lg  mb-2 lg:mb-0  cursor-pointer`}>
                 <div className="flex items-center border p-3 rounded-lg lg:max-w-[300px] justify-between" onClick={() => setIsOpen(!isOpen)}>
                     <input onChange={()=>{}} className="font-medium focus:border-none border-none cursor-pointer outline-none" type="text" placeholder="Select Price"
                         value={startPrice !== 0 && endPrice !== 0 ? startPrice !== endPrice ? "Rs. " + startPrice + " - " + endPrice : "Rs. 10000+ " : ""} />
@@ -41,7 +41,7 @@ export const SearchBox = () => {
                     }
                 </div>
             </div>
-            <div className={`${isOpen ? " z-30" : "z-50"}`}>
+            <div className={`${isOpen ? " z-30" : ""}`}>
                 <DatePicker
                     selected={startDate}
                     className="border lg:mb-0 mb-2 lg:w-fit  font-medium cursor-pointer bg-white focus:border-blue-600 focus:border-4 border-black px-2 py-3 rounded-lg text-black lg:min-w-[300px]  lg:px-3 flex justify-center"
