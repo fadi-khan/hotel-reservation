@@ -5,8 +5,33 @@ import { MdClose } from "react-icons/md"
 import { FaGoogle } from "react-icons/fa"
 import { FaGooglePlus } from "react-icons/fa6"
 import { IoLogoGoogle } from "react-icons/io"
+import { useEffect, useState } from "react"
+import { authService } from "@/lib/services/auth"
+
 export const LoginModal = () => {
     const { openLoginModal, closeLoginModal, loginModalOpen } = useLoginModalStore()
+    const [email, setEmail]= useState("")
+    const [password,setPassword]=useState("")
+
+   const handleLogin= async(e:React.FormEvent)=>{
+    e.preventDefault()
+
+    try {
+       const response =await  authService.login({password,email})
+       if(response?.data){
+
+        console.log("Logged in Successfully ")
+        console.log(response.data)
+
+        localStorage.setItem("access_token", response.data.access_token)
+
+        console.log(localStorage.getItem("access_token"))
+       }
+    } catch (error) {
+        
+    }
+    
+   }
 
     return (
 
@@ -26,15 +51,18 @@ export const LoginModal = () => {
                             <MdClose size={25} onClick={closeLoginModal} className="cursor-pointer text-blue-900  " />
                         </DialogTitle>
 
-                        <form className=" flex flex-col items-center mt-6 justify-center gap-y-6">
+                        <form onSubmit={handleLogin} className=" flex flex-col items-center mt-6 justify-center gap-y-6">
                             <Field className={"flex-col flex w-full "}>
                                 <Label className={"font-medium  text-blue-900"}>Email</Label>
-                                <Input placeholder="Enter you email" required type="email" className={"bg-white   rounded p-2 px-3 focus:outline-blue-900"}></Input>
+                                <Input
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                 placeholder="Enter you email" required type="email" className={"bg-white   rounded p-2 px-3 focus:outline-blue-900"}></Input>
                             </Field>
 
                             <Field className={"flex-col flex w-full "}>
                                 <Label className={"font-medium text-blue-900"}>Password</Label>
-                                <Input placeholder="Enter your password" required type="password" className={"bg-white  rounded p-2 px-3  focus:outline-blue-900"}></Input>
+                                <Input value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Enter your password" required type="password" className={"bg-white  rounded p-2 px-3  focus:outline-blue-900"}></Input>
                             </Field>
 
                             <Input className={"w-full bg-blue-800 text-white py-3 hover:bg-blue-900/90 px-3 rounded-lg mt-3 font-medium cursor-pointer"} type="submit" name="Login" value="Login"></Input>

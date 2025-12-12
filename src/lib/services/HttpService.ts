@@ -2,7 +2,7 @@ import axios, { AxiosInstance } from "axios";
 import { store } from "@/lib/store/store";
 import { handleLogout } from "@/lib/store/authSlice";
 
-const baseUrl = process.env.NEXT_PUBLIC_API_URL || process.env.API_URL || 'http://localhost:3000';
+const baseUrl = process.env.API_URL || 'http://localhost:3000';
 
 // Debug logging to verify baseUrl
 if (typeof window !== 'undefined') {
@@ -45,12 +45,12 @@ class HttpService {
           if (!this.isRefreshing) {
             this.isRefreshing = true;
             try {
-              const { data } = await this.axios.post("/auth/refresh");
+              const { data } = await this.axios.post("/auth/refresh-token");
 
-              localStorage.setItem("access_token", data.accessToken);
+              localStorage.setItem("access_token", data.access_token);
 
               this.isRefreshing = false;
-              this.onRefreshed(data.accessToken);
+              this.onRefreshed(data.access_token);
             } catch (err) {
               this.isRefreshing = false;
               return Promise.reject(err);
