@@ -1,3 +1,4 @@
+import { toast } from "react-toastify";
 import { httpService } from "./HttpService"
 type LoginPayload = {
   email: string;
@@ -10,12 +11,16 @@ export const authService = {
 
         try {
             const response = await httpService.post("auth/sign-in",{password:password,email:email,name:"Unknown"})
+                localStorage.setItem("access_token", response.data.access_token)
+                toast.success("Logged in Successfully !")
+
             return response;
         } catch (error:any) {
 
-            throw new Error(error.response.data.message||" Failed to process request . Please try again later !")
+            toast.error(error.response.data.message||" Failed to process request . Please try again later !")
+
             
         }
     }
 
-}
+}  

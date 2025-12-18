@@ -5,6 +5,7 @@ import "./globals.css";
 import { MainHeader } from "@/components/headers/MainHeader";
 import { MobileSideBar } from "@/components/sidebars/MobileSidebar";
 import { useState } from "react";
+import { ToastProvider } from "@/components/toasts/ToastProvider";
 
 
 const geistSans = Geist({
@@ -33,6 +34,7 @@ export default function RootLayout({
       >
         <MainHeader setIsOpen={()=>setIsOpen(!isOpen)}/>
         <MobileSideBar isOpen={isOpen} setIsOpen={()=>setIsOpen(!isOpen)}/>
+        <ToastProvider />
         {children}
       </body>
     </html>
