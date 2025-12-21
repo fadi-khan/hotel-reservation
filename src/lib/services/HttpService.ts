@@ -53,6 +53,7 @@ class HttpService {
               this.onRefreshed(data.access_token);
             } catch (err) {
               this.isRefreshing = false;
+              localStorage.removeItem("access_token") // nullify the access token
               return Promise.reject(err);
             }
           }
