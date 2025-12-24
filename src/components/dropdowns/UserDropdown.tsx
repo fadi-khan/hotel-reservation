@@ -38,7 +38,7 @@ export const UserDropdown = () => {
 
         <Menu  >
 
-            {profile?.email && <MenuButton className={' cursor-pointer inline-flex items-center gap-2 focus:outline-white font-semibold'}>
+            {profile?.email && <MenuButton className={' w-full cursor-pointer inline-flex items-center gap-2 focus:outline-white font-semibold'}>
                 {profile.email}
                 <BiChevronDown className="size-5" />
             </MenuButton>}
@@ -46,7 +46,7 @@ export const UserDropdown = () => {
             <MenuItems 
                 transition
                 anchor='bottom start'
-                className={'shadow-2xl shadow-black z-30 bg-white gap-1  mt-3 py-2   flex flex-col rounded-lg text-blue-900   outline-none border border-blue-800 w-48'}>
+                className={'shadow-2xl shadow-black z-40 bg-white gap-1  mt-3 py-2   flex flex-col rounded-lg text-blue-900   outline-none border border-blue-800 w-48'}>
                 <MenuItem >
                     <button className= "cursor-pointer font-medium hover:px-4 transition-all duration-150 ease-out px-3 group flex  py-1 items-center gap-x-2 w-full">
                         <FaUser />

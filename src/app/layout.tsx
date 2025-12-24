@@ -33,7 +33,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased `}
       >
         <MainHeader setIsOpen={()=>setIsOpen(!isOpen)}/>
-        <MobileSideBar isOpen={isOpen} setIsOpen={()=>setIsOpen(!isOpen)}/>
+        <MobileSideBar isOpen={isOpen} setIsOpen={setIsOpen}/>
         <ToastProvider />
         {children}
       </body>
