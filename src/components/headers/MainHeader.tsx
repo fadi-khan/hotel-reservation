@@ -3,16 +3,17 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { BiMenu } from 'react-icons/bi';
 import { LoginModal } from '../auth/LoginModal';
+import { httpService } from '@/lib/services/HttpService';
+import { UserDropdown } from '../dropdowns/UserDropdown';
 
 export const MainHeader = ({setIsOpen}: {setIsOpen: () => void}) => {
 
     const [isLoggedIn, setIsLoggedIn]= useState(false)
 
     useEffect(()=>{
-        setIsLoggedIn(!!localStorage.getItem("access_token"))
+        setIsLoggedIn(httpService.isLoggedIn())
 
-    },[])
-
+    }, [])
 
     return (
         <header className="flex justify-between px-4 lg:px-12 shadow-blue-400  
@@ -28,10 +29,8 @@ export const MainHeader = ({setIsOpen}: {setIsOpen: () => void}) => {
                     <Link href="/home">Home</Link>
                     <Link href="/about">About</Link>
                     <Link href="/contact">Contact</Link>
-                    {/* <Link href="/my-bookings">My Bookings</Link> */}
-                    <LoginModal/>
-                    {/* <Link href="/sign-up">Sign Up</Link> */}
-                    {/* <Link href="/sign-out">Logout</Link> */}
+                    {!isLoggedIn ?<LoginModal/>:<UserDropdown/>} 
+               
                 </ul>
                 <BiMenu className='size-8 md:hidden text-blue-900 cursor-pointer ' onClick={setIsOpen}/> 
                 

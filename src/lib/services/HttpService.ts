@@ -89,6 +89,10 @@ class HttpService {
   post(url: string, body?: any) {
     return this.axios.post(url, body);
   }
+
+  isLoggedIn(): boolean {
+    return !!localStorage.getItem("access_token");
+  }
 }
 
 // Create a singleton instance

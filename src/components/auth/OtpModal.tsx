@@ -9,9 +9,12 @@ const [otp , setOtp ] =  useState("")
 const handleSubmit = async (e:any) => {
     
     e.preventDefault()
-    const response = await authService.verifyOtp({email,otp})
- 
-
+try{
+    await authService.verifyOtp({email,otp})
+}
+finally{
+    window.location.href = "/"
+}
 }
 
 
@@ -21,14 +24,14 @@ return(
 
     <Field className={'flex flex-col gap-y-1'}>
 
-        <Label className={''}> Enter your OTP </Label>
+        <Label className={'text-blue-900 font-medium '}> Enter your OTP </Label>
         <Input 
         type="text"
         maxLength={6}
         inputMode="numeric"
         placeholder="Enter your six digits OTP here "
 
-        className={"py-2 border rounded-lg  px-2 bg-white "}
+        className={"py-2 border rounded border-none focus:outline-blue-900 px-2 bg-white "}
         value={otp}
         onChange={(e)=>setOtp(e.target.value)}
         />
