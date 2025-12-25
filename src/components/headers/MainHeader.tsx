@@ -11,8 +11,16 @@ export const MainHeader = ({setIsOpen}: {setIsOpen: () => void}) => {
     const [isLoggedIn, setIsLoggedIn]= useState(false)
 
     useEffect(()=>{
-        setIsLoggedIn(httpService.isLoggedIn())
+        const updateAuth = () => setIsLoggedIn(httpService.isLoggedIn())
+        updateAuth()
 
+        window.addEventListener("auth-changed", updateAuth)
+        window.addEventListener("storage", updateAuth)
+
+        return () => {
+            window.removeEventListener("auth-changed", updateAuth)
+            window.removeEventListener("storage", updateAuth)
+        }
     }, [])
 
     return (

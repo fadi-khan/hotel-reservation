@@ -1,6 +1,8 @@
 import { authService } from "@/lib/services/auth"
 import { Button, Dialog, Field, Input, Label } from "@headlessui/react"
 import { useState } from "react"
+import { store } from "@/lib/store/store"
+import { handleLogin } from "@/lib/store/authSlice"
 
 export const OtpModal = ({ email }: { email: string })=>{
 
@@ -10,7 +12,12 @@ const handleSubmit = async (e:any) => {
     
     e.preventDefault()
 try{
-    await authService.verifyOtp({email,otp})
+    const response = await authService.verifyOtp({email,otp})
+
+    const token = response?.data?.access_token ?? localStorage.getItem("access_token")
+    if (token) {
+        store.dispatch(handleLogin({ token, user: {} }))
+    }
 }
 finally{
     window.location.href = "/"

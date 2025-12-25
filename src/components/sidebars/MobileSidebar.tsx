@@ -1,26 +1,33 @@
 "use client"
 import { IoMdClose } from "react-icons/io"
 import Link from "next/link"
-import Image from "next/image"
 import { useEffect, useState } from "react"
 import { httpService } from "@/lib/services/HttpService"
 import { MdLogout } from "react-icons/md"
-import { UserDropdown } from "../dropdowns/UserDropdown"
 import { authService } from "@/lib/services/auth"
+import { store } from "@/lib/store/store"
+import { handleLogout as handleLogoutAction } from "@/lib/store/authSlice"
 import { useLoginModalStore } from "../auth/store/loginModalStore"
 export const MobileSideBar = ({ isOpen, setIsOpen }: { isOpen: boolean; setIsOpen: (x: boolean) => void }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const setLoginModalOpen = useLoginModalStore((x) => x.setLoginModalOpen)
 
   useEffect(() => {
-    setIsLoggedIn(httpService.isLoggedIn())
+    const updateAuth = () => setIsLoggedIn(httpService.isLoggedIn())
+    updateAuth()
 
+    window.addEventListener("auth-changed", updateAuth)
+    window.addEventListener("storage", updateAuth)
+    return () => {
+      window.removeEventListener("auth-changed", updateAuth)
+      window.removeEventListener("storage", updateAuth)
+    }
   }, [])
 
   const handleLogout = async () => {
     try {
       await authService.logout()
-      localStorage.removeItem("access_token")
+      store.dispatch(handleLogoutAction())
       setIsOpen(false)
     } finally {
 

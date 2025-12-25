@@ -1,4 +1,6 @@
 import { authService } from "@/lib/services/auth";
+import { store } from "@/lib/store/store";
+import { handleLogout as handleLogoutAction } from "@/lib/store/authSlice";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react"
 import Link from "next/link";
 import { useEffect, useState } from "react"
@@ -28,7 +30,7 @@ export const UserDropdown = () => {
         try {
             await authService.logout()
         } finally {
-            localStorage.removeItem("access_token")
+            store.dispatch(handleLogoutAction())
             setProfile(null)
             window.location.href = "/"
         }
@@ -56,7 +58,7 @@ export const UserDropdown = () => {
                 </MenuItem>
                 <MenuItem>
                     <button className="cursor-pointer font-medium  hover:px-4 transition-all duration-150 ease-out px-3 group flex  py-1 items-center gap-x-2 w-full">
-                        <RiSuitcaseFill size={18} />
+                        <RiSuitcaseFill className=" " size={18} />
                         <Link href={'/'}> My Bookings</Link>
                     </button>
                 </MenuItem>

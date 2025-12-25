@@ -37,6 +37,23 @@ class HttpService {
       async (error) => {
         const originalRequest = error.config;
 
+        // If refresh-token itself fails with 401, do NOT attempt to refresh again.
+        // The interceptor would otherwise swallow the error and your outer try/catch
+        // around the refresh call would never run.
+        if (
+          error.response?.status === 401 &&
+          typeof originalRequest?.url === "string" &&
+          originalRequest.url.includes("/auth/refresh-token")
+        ) {
+          this.isRefreshing = false;
+          localStorage.removeItem("access_token");
+          store.dispatch(handleLogout());
+          if (typeof window !== "undefined") {
+            window.dispatchEvent(new Event("auth-changed"));
+          }
+          return Promise.reject(error);
+        }
+
         // If 401 (expired access token)
         if (error.response?.status === 401 && !originalRequest._retry) {
           originalRequest._retry = true;
@@ -53,7 +70,11 @@ class HttpService {
               this.onRefreshed(data.access_token);
             } catch (err) {
               this.isRefreshing = false;
-              localStorage.removeItem("access_token") // nullify the access token
+              localStorage.removeItem("access_token");
+              store.dispatch(handleLogout());
+              if (typeof window !== "undefined") {
+                window.dispatchEvent(new Event("auth-changed"));
+              }
               return Promise.reject(err);
             }
           }
