@@ -2,87 +2,62 @@ import axios, { AxiosInstance } from "axios";
 import { store } from "@/lib/store/store";
 import { handleLogout } from "@/lib/store/authSlice";
 
-const baseUrl = process.env.API_URL || 'http://localhost:3000';
-
-// Debug logging to verify baseUrl
-if (typeof window !== 'undefined') {
-  console.log('Client-side baseUrl:', baseUrl);
-} else {
-  console.log('Server-side baseUrl:', baseUrl);
-}
+const baseUrl = process.env.API_URL || "http://localhost:3000";
 
 class HttpService {
   private axios: AxiosInstance;
   private isRefreshing = false;
-  private refreshSubscribers: ((token: string) => void)[] = [];
+  private subscribers: ((token: string) => void)[] = [];
 
   constructor() {
     this.axios = axios.create({
       baseURL: baseUrl,
-      withCredentials: true, // VERY IMPORTANT for refresh token cookies
+      withCredentials: true,
     });
 
-    // Attach access token to every request
-    this.axios.interceptors.request.use((config) => {
-      const accessToken = localStorage.getItem("access_token");
-      if (accessToken) {
-        config.headers.Authorization = `Bearer ${accessToken}`;
-      }
-      return config;
-    });
-
-    // Response interceptor (auto refresh on 401)
     this.axios.interceptors.response.use(
       (res) => res,
       async (error) => {
         const originalRequest = error.config;
 
-        // If refresh-token itself fails with 401, do NOT attempt to refresh again.
-        // The interceptor would otherwise swallow the error and your outer try/catch
-        // around the refresh call would never run.
-        if (
-          error.response?.status === 401 &&
-          typeof originalRequest?.url === "string" &&
-          originalRequest.url.includes("/auth/refresh-token")
-        ) {
-          this.isRefreshing = false;
-          localStorage.removeItem("access_token");
+        // Prevent SSR crash
+        const isBrowser = typeof window !== "undefined";
+
+        // If refresh token API fails → logout (single robust cleanup)
+        if (error.response?.status === 401 && originalRequest.url?.includes("/auth/refresh-token")) {
           store.dispatch(handleLogout());
-          if (typeof window !== "undefined") {
-            window.dispatchEvent(new Event("auth-changed"));
-          }
+          if (isBrowser) window.dispatchEvent(new Event("auth-changed"));
           return Promise.reject(error);
         }
 
-        // If 401 (expired access token)
+        // If access token expired → refresh
         if (error.response?.status === 401 && !originalRequest._retry) {
           originalRequest._retry = true;
 
-          // Avoid calling refresh API multiple times
           if (!this.isRefreshing) {
             this.isRefreshing = true;
             try {
-              const { data } = await this.axios.post("/auth/refresh-token");
-
-              localStorage.setItem("access_token", data.access_token);
+              // Isolated refresh call (no interceptors involved)
+              const { data } = await axios.post(
+                "/auth/refresh-token",
+                {},
+                { baseURL: baseUrl, withCredentials: true }
+              );
 
               this.isRefreshing = false;
-              this.onRefreshed(data.access_token);
-            } catch (err) {
+              this.notify(data.access_token);
+            } catch (e) {
               this.isRefreshing = false;
-              localStorage.removeItem("access_token");
               store.dispatch(handleLogout());
-              if (typeof window !== "undefined") {
-                window.dispatchEvent(new Event("auth-changed"));
-              }
-              return Promise.reject(err);
+              if (isBrowser) window.dispatchEvent(new Event("auth-changed"));
+              return Promise.reject(e);
             }
           }
 
-          // Queue the request until refresh finishes
+          // Queue until token refreshes
           return new Promise((resolve) => {
-            this.subscribeTokenRefresh((token: string) => {
-              originalRequest.headers.Authorization = "Bearer " + token;
+            this.subscribe((token) => {
+              originalRequest.headers.Authorization = `Bearer ${token}`;
               resolve(this.axios(originalRequest));
             });
           });
@@ -93,14 +68,13 @@ class HttpService {
     );
   }
 
-  // helpers
-  private subscribeTokenRefresh(cb: (token: string) => void) {
-    this.refreshSubscribers.push(cb);
+  private subscribe(cb: (token: string) => void) {
+    this.subscribers.push(cb);
   }
 
-  private onRefreshed(token: string) {
-    this.refreshSubscribers.forEach((cb) => cb(token));
-    this.refreshSubscribers = [];
+  private notify(token: string) {
+    this.subscribers.forEach((cb) => cb(token));
+    this.subscribers = [];
   }
 
   get(url: string) {
@@ -110,11 +84,6 @@ class HttpService {
   post(url: string, body?: any) {
     return this.axios.post(url, body);
   }
-
-  isLoggedIn(): boolean {
-    return !!localStorage.getItem("access_token");
-  }
 }
 
-// Create a singleton instance
 export const httpService = new HttpService();

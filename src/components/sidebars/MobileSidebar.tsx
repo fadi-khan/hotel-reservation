@@ -12,17 +12,17 @@ export const MobileSideBar = ({ isOpen, setIsOpen }: { isOpen: boolean; setIsOpe
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const setLoginModalOpen = useLoginModalStore((x) => x.setLoginModalOpen)
 
-  useEffect(() => {
-    const updateAuth = () => setIsLoggedIn(httpService.isLoggedIn())
-    updateAuth()
+  // useEffect(() => {
+  //   const updateAuth = () => setIsLoggedIn(httpService.isLoggedIn())
+  //   updateAuth()
 
-    window.addEventListener("auth-changed", updateAuth)
-    window.addEventListener("storage", updateAuth)
-    return () => {
-      window.removeEventListener("auth-changed", updateAuth)
-      window.removeEventListener("storage", updateAuth)
-    }
-  }, [])
+  //   window.addEventListener("auth-changed", updateAuth)
+  //   window.addEventListener("storage", updateAuth)
+  //   return () => {
+  //     window.removeEventListener("auth-changed", updateAuth)
+  //     window.removeEventListener("storage", updateAuth)
+  //   }
+  // }, [])
 
   const handleLogout = async () => {
     try {

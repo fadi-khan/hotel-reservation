@@ -15,7 +15,6 @@ export const authService = {
 
         try {
             const response = await httpService.post("auth/sign-in", { password, email, name: "Unknown" })
-            // localStorage.setItem("access_token", response.data.access_token)
             toast.success(response?.data?.message)
 
 
@@ -40,8 +39,8 @@ export const authService = {
         try {
 
             const response = await httpService.post("auth/verify-otp", payload)
-            localStorage.setItem("access_token", response.data.access_token)
             toast.success("Login Successful!")
+            return response
 
 
         } catch (error: any) {

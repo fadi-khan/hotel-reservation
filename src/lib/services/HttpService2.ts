@@ -1,79 +1,89 @@
-import axios, { AxiosInstance } from "axios";
-import { store } from "@/lib/store/store";
-import { handleLogout } from "@/lib/store/authSlice";
+// import axios, { AxiosInstance } from "axios";
+// import { store } from "@/lib/store/store";
+// import { handleLogout } from "@/lib/store/authSlice";
 
-const baseUrl = process.env.API_URL || "http://localhost:3000";
+// const baseUrl = process.env.API_URL || "http://localhost:3000";
 
-class HttpService {
-  private axios: AxiosInstance;
-  private isRefreshing = false;
-  private subscribers: ((token: string) => void)[] = [];
+// class HttpService {
+//   private axios: AxiosInstance;
+//   private isRefreshing = false;
+//   private subscribers: ((token: string) => void)[] = [];
 
-  constructor() {
-    this.axios = axios.create({
-      baseURL: baseUrl,
-      withCredentials: true, // sends cookies automatically
-    });
+//   constructor() {
+//     this.axios = axios.create({
+//       baseURL: baseUrl,
+//       withCredentials: true,
+//     });
 
-    this.axios.interceptors.response.use(
-      (res) => res,
-      async (error) => {
-        const req = error.config;
+//     this.axios.interceptors.response.use(
+//       (res) => res,
+//       async (error) => {
+//         const originalRequest = error.config;
 
-        // If refresh fails → logout
-        if (error.response?.status === 401 && req?.url?.includes("/auth/refresh-token")) {
-          store.dispatch(handleLogout());
-          window.dispatchEvent(new Event("auth-changed"));
-          return Promise.reject(error);
-        }
+//         // Prevent SSR crash
+//         const isBrowser = typeof window !== "undefined";
 
-        // If access token expired → refresh
-        if (error.response?.status === 401 && !req._retry) {
-          req._retry = true;
+//         // If refresh token API fails → logout (single robust cleanup)
+//         if (error.response?.status === 401 && originalRequest.url?.includes("/auth/refresh-token")) {
+//           store.dispatch(handleLogout());
+//           if (isBrowser) window.dispatchEvent(new Event("auth-changed"));
+//           return Promise.reject(error);
+//         }
 
-          if (!this.isRefreshing) {
-            this.isRefreshing = true;
-            try {
-              const { data } = await this.axios.post("/auth/refresh-token");
-              this.isRefreshing = false;
-              this.notify(data.access_token);
-            } catch (e) {
-              this.isRefreshing = false;
-              store.dispatch(handleLogout());
-              window.dispatchEvent(new Event("auth-changed"));
-              return Promise.reject(e);
-            }
-          }
+//         // If access token expired → refresh
+//         if (error.response?.status === 401 && !originalRequest._retry) {
+//           originalRequest._retry = true;
 
-          return new Promise((resolve) => {
-            this.subscriber((token) => {
-              req.headers.Authorization = `Bearer ${token}`;
-              resolve(this.axios(req));
-            });
-          });
-        }
+//           if (!this.isRefreshing) {
+//             this.isRefreshing = true;
+//             try {
+//               // Isolated refresh call (no interceptors involved)
+//               const { data } = await axios.post(
+//                 "/auth/refresh-token",
+//                 {},
+//                 { baseURL: baseUrl, withCredentials: true }
+//               );
 
-        return Promise.reject(error);
-      }
-    );
-  }
+//               this.isRefreshing = false;
+//               this.notify(data.access_token);
+//             } catch (e) {
+//               this.isRefreshing = false;
+//               store.dispatch(handleLogout());
+//               if (isBrowser) window.dispatchEvent(new Event("auth-changed"));
+//               return Promise.reject(e);
+//             }
+//           }
 
-  private subscriber(cb: (token: string) => void) {
-    this.subscribers.push(cb);
-  }
+//           // Queue until token refreshes
+//           return new Promise((resolve) => {
+//             this.subscribe((token) => {
+//               originalRequest.headers.Authorization = `Bearer ${token}`;
+//               resolve(this.axios(originalRequest));
+//             });
+//           });
+//         }
 
-  private notify(token: string) {
-    this.subscribers.forEach((cb) => cb(token));
-    this.subscribers = [];
-  }
+//         return Promise.reject(error);
+//       }
+//     );
+//   }
 
-  get(url: string) {
-    return this.axios.get(url);
-  }
+//   private subscribe(cb: (token: string) => void) {
+//     this.subscribers.push(cb);
+//   }
 
-  post(url: string, body?: any) {
-    return this.axios.post(url, body);
-  }
-}
+//   private notify(token: string) {
+//     this.subscribers.forEach((cb) => cb(token));
+//     this.subscribers = [];
+//   }
 
-export const httpService = new HttpService();
+//   get(url: string) {
+//     return this.axios.get(url);
+//   }
+
+//   post(url: string, body?: any) {
+//     return this.axios.post(url, body);
+//   }
+// }
+
+// export const httpService = new HttpService();

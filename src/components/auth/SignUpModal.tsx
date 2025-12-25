@@ -24,7 +24,6 @@ export const SignUpModal = () => {
         console.log("Logged in Successfully ")
         console.log(response.data)
 
-        localStorage.setItem("access_token", response.data.access_token)
 
         console.log(localStorage.getItem("access_token"))
        }

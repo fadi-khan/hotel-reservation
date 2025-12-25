@@ -1,11 +1,10 @@
 "use client"
-import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { MainHeader } from "@/components/headers/MainHeader";
-import { MobileSideBar } from "@/components/sidebars/MobileSidebar";
-import { useState } from "react";
 import { ToastProvider } from "@/components/toasts/ToastProvider";
+import { Provider } from "react-redux";
+import { store } from "@/lib/store/store";
+import { Wrapper } from "./wrapper";
 
 
 const geistSans = Geist({
@@ -26,16 +25,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
 
-  const [isOpen, setIsOpen] = useState(false);
+  
   return (
     <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased `}
       >
-        <MainHeader setIsOpen={()=>setIsOpen(!isOpen)}/>
-        <MobileSideBar isOpen={isOpen} setIsOpen={setIsOpen}/>
+        <Provider store={store}>
+        <Wrapper/>
         <ToastProvider />
         {children}
+        </Provider>
       </body>
     </html>
   );

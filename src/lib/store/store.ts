@@ -15,5 +15,5 @@ export const store = configureStore({
 });
 
 // Export types for TypeScript users
-// export type RootState = ReturnType<typeof store.getState>;
-// export type AppDispatch = typeof store.dispatch;
+export type RootState = ReturnType<typeof store.getState>;
+export type AppDispatch = typeof store.dispatch;

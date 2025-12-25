@@ -9,21 +9,10 @@ export const OtpModal = ({ email }: { email: string })=>{
 
 const [otp , setOtp ] =  useState("")  
 const handleSubmit = async (e:any) => {
-    
-    e.preventDefault()
-try{
-    const response = await authService.verifyOtp({email,otp})
-
-    const token = response?.data?.access_token ?? localStorage.getItem("access_token")
-    if (token) {
-        store.dispatch(handleLogin({ token, user: {} }))
-    }
-}
-finally{
-    window.location.href = "/"
-}
-}
-
+  e.preventDefault();
+  const response = await authService.verifyOtp({ email, otp }); // sets cookie
+  store.dispatch(handleLogin({ user: response.data.user }));
+};
 
 return(
 
