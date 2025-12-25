@@ -1,11 +1,13 @@
 import { authService } from "@/lib/services/auth";
+import { clearCredentials } from "@/lib/store/authSlice";
+import { store } from "@/lib/store/store";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react"
 import Link from "next/link";
-import { useEffect, useState } from "react"
+import {  useState } from "react"
 import { BiChevronDown } from "react-icons/bi";
 import { FaUser } from "react-icons/fa";
 import { MdLogout } from "react-icons/md";
-import { RiSuitcaseFill, RiSuitcaseLine } from "react-icons/ri";
+import { RiSuitcaseFill} from "react-icons/ri";
 
 export const UserDropdown = () => {
 
@@ -14,32 +16,27 @@ export const UserDropdown = () => {
         email?: string
     }
 
-    const [profile, setProfile] = useState<Profile | null>(null)
-    useEffect(() => {
-        const loadProfile = async () => {
-            const response = await authService.getProfile()
-            setProfile(response?.data ?? null)
-        }
+    const rawUser = localStorage.getItem("user")
 
-        loadProfile()
-    }, [])
+    const user = rawUser? JSON.parse(rawUser):null
+
+    const [profile, setProfile] = useState<Profile | null>(null)
+
 
     const handleLogout = async () => {
-        try {
+     
             await authService.logout()
-        } finally {
-            localStorage.removeItem("access_token")
-            setProfile(null)
-            window.location.href = "/"
-        }
+
+            
+        
     }
 
     return (
 
         <Menu  >
 
-            {profile?.email && <MenuButton className={' w-full cursor-pointer inline-flex items-center gap-2 focus:outline-white font-semibold'}>
-                {profile.email}
+            {user?.email && <MenuButton className={' w-full cursor-pointer inline-flex items-center gap-2 focus:outline-white font-semibold'}>
+                {user.email}
                 <BiChevronDown className="size-5" />
             </MenuButton>}
 

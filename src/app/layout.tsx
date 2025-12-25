@@ -6,6 +6,7 @@ import { MainHeader } from "@/components/headers/MainHeader";
 import { MobileSideBar } from "@/components/sidebars/MobileSidebar";
 import { useState } from "react";
 import { ToastProvider } from "@/components/toasts/ToastProvider";
+import { LayoutWrapper } from "./LayoutWrapper";
 
 
 const geistSans = Geist({
@@ -32,10 +33,8 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased `}
       >
-        <MainHeader setIsOpen={()=>setIsOpen(!isOpen)}/>
-        <MobileSideBar isOpen={isOpen} setIsOpen={setIsOpen}/>
-        <ToastProvider />
-        {children}
+   
+        <LayoutWrapper>{children}</LayoutWrapper>
       </body>
     </html>
   );

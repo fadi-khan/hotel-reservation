@@ -1,5 +1,7 @@
 import { toast } from "react-toastify";
 import { httpService } from "./HttpService"
+import { store } from "../store/store";
+import { clearCredentials, setCredentials } from "../store/authSlice";
 type LoginPayload = {
     email: string;
     password: string;
@@ -40,8 +42,9 @@ export const authService = {
         try {
 
             const response = await httpService.post("auth/verify-otp", payload)
-            localStorage.setItem("access_token", response.data.access_token)
             toast.success("Login Successful!")
+            store.dispatch(setCredentials(response?.data?.user))
+            return response;
 
 
         } catch (error: any) {
@@ -67,10 +70,10 @@ export const authService = {
 
         }
     },
-     logout: async () => {
+    logout: async () => {
         try {
             const response = await httpService.post("auth/logout");
-
+            store.dispatch(clearCredentials())
             return response;
 
         } catch (error: any) {
@@ -81,6 +84,6 @@ export const authService = {
         }
     }
 
-    
+
 
 }  

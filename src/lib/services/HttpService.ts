@@ -1,6 +1,5 @@
 import axios, { AxiosInstance } from "axios";
 import { store } from "@/lib/store/store";
-import { handleLogout } from "@/lib/store/authSlice";
 
 const baseUrl = process.env.API_URL || 'http://localhost:3000';
 
@@ -24,10 +23,6 @@ class HttpService {
 
     // Attach access token to every request
     this.axios.interceptors.request.use((config) => {
-      const accessToken = localStorage.getItem("access_token");
-      if (accessToken) {
-        config.headers.Authorization = `Bearer ${accessToken}`;
-      }
       return config;
     });
 
@@ -37,6 +32,9 @@ class HttpService {
       async (error) => {
         const originalRequest = error.config;
 
+        if (originalRequest.url.includes('auth/logout') || originalRequest.url.includes('auth/refresh-token')) {
+    return Promise.reject(error);
+  }
         // If 401 (expired access token)
         if (error.response?.status === 401 && !originalRequest._retry) {
           originalRequest._retry = true;
@@ -47,13 +45,11 @@ class HttpService {
             try {
               const { data } = await this.axios.post("/auth/refresh-token");
 
-              localStorage.setItem("access_token", data.access_token);
-
               this.isRefreshing = false;
               this.onRefreshed(data.access_token);
             } catch (err) {
               this.isRefreshing = false;
-              localStorage.removeItem("access_token") // nullify the access token
+              localStorage.removeItem("user") 
               return Promise.reject(err);
             }
           }
@@ -91,7 +87,7 @@ class HttpService {
   }
 
   isLoggedIn(): boolean {
-    return !!localStorage.getItem("access_token");
+    return !!localStorage.getItem("user");
   }
 }
 

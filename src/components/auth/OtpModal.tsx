@@ -9,12 +9,8 @@ const [otp , setOtp ] =  useState("")
 const handleSubmit = async (e:any) => {
     
     e.preventDefault()
-try{
-    await authService.verifyOtp({email,otp})
-}
-finally{
-    window.location.href = "/"
-}
+    const response = await authService.verifyOtp({email,otp})
+
 }
 
 

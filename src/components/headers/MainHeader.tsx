@@ -5,15 +5,12 @@ import { BiMenu } from 'react-icons/bi';
 import { LoginModal } from '../auth/LoginModal';
 import { httpService } from '@/lib/services/HttpService';
 import { UserDropdown } from '../dropdowns/UserDropdown';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/lib/store/store';
 
 export const MainHeader = ({setIsOpen}: {setIsOpen: () => void}) => {
 
-    const [isLoggedIn, setIsLoggedIn]= useState(false)
-
-    useEffect(()=>{
-        setIsLoggedIn(httpService.isLoggedIn())
-
-    }, [])
+    const {isAuthenticated }=  useSelector((state:RootState)=>state.auth)
 
     return (
         <header className="flex justify-between px-4 lg:px-12 shadow-blue-400  
@@ -29,7 +26,7 @@ export const MainHeader = ({setIsOpen}: {setIsOpen: () => void}) => {
                     <Link href="/home">Home</Link>
                     <Link href="/about">About</Link>
                     <Link href="/contact">Contact</Link>
-                    {!isLoggedIn ?<LoginModal/>:<UserDropdown/>} 
+                    {!isAuthenticated ?<LoginModal/>:<UserDropdown/>} 
                
                 </ul>
                 <BiMenu className='size-8 md:hidden text-blue-900 cursor-pointer ' onClick={setIsOpen}/> 
