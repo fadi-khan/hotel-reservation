@@ -1,7 +1,7 @@
 import axios, { AxiosInstance } from "axios";
 import { store } from "@/lib/store/store";
 
-const baseUrl = process.env.API_URL || 'http://localhost:3000';
+const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
 
 // Debug logging to verify baseUrl
 if (typeof window !== 'undefined') {
