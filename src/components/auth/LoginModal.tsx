@@ -1,13 +1,14 @@
 "use client"
 
-import { Button, Dialog, DialogBackdrop, DialogPanel, DialogTitle, Field, Input, Label } from "@headlessui/react"
+import {  Dialog, DialogBackdrop, DialogPanel, DialogTitle, Field, Input, Label } from "@headlessui/react"
 import { useLoginModalStore } from "./store/loginModalStore"
 import Image from "next/image"
 import { MdClose } from "react-icons/md"
 import { FaGoogle } from "react-icons/fa"
-import {  useState } from "react"
+import { useState } from "react"
 import { authService } from "@/lib/services/auth"
 import { OtpModal } from "./OtpModal"
+import { Button } from "flowbite-react"
 
 export const LoginModal = () => {
 
@@ -16,6 +17,10 @@ export const LoginModal = () => {
     const [password, setPassword] = useState("")
     const [showOTP, setShowOTP] = useState(false)
 
+    const handleGoogleLogin = () => {
+        // Direct redirect to NestJS to initiate OAuth flow
+        window.location.href = process.env.GOOGLE_CALLBACK_URL || "http://localhost:3001/auth/google";
+    };
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault()
         const response = await authService.login({ password, email })
@@ -32,9 +37,8 @@ export const LoginModal = () => {
     return (
 
         <>
-            <Button
-                onClick={openLoginModal}
-                className={"bg-blue-900   text-white  hover:bg-blue-900/90 text-sm focus:border-black  rounded-md px-8 py-2 cursor-pointer font-medium"}> Login</Button>
+            <Button onClick={openLoginModal} className='bg-blue-900! cursor-pointer hover:bg-blue-800!'>Login</Button>
+
             <Dialog open={loginModalOpen} onClose={handleModalClose} as="div" transition
                 className={"relative z-30 rounded-2xl"}
 
@@ -75,8 +79,10 @@ export const LoginModal = () => {
                         <hr className=" mt-12 mb-4 text-blue-900 h-[2px] bg-blue-900 " />
 
                         <Button
-
-                            className={"items-center flex justify-center mt-8 gap-2  rounded-lg cursor-pointer bg-orange-700 hover:bg-orange-800 text-white w-full py-3 px-3"}> <FaGoogle size={16} /> <span>Login with Google</span> </Button>
+                            onClick={handleGoogleLogin}
+                            className={"items-center flex justify-center mt-8 gap-2  rounded-lg cursor-pointer bg-orange-700! hover:bg-orange-800! text-white w-full py-3 px-3"}>
+                            <FaGoogle size={16} /> <span>Login with Google</span>
+                        </Button>
 
 
 

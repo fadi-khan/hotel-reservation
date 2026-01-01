@@ -1,6 +1,7 @@
 "use client"
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import "flowbite/dist/flowbite.css";
 import "./globals.css";
 import { MainHeader } from "@/components/headers/MainHeader";
 import { MobileSideBar } from "@/components/sidebars/MobileSidebar";

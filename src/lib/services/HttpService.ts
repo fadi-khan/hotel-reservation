@@ -32,9 +32,6 @@ class HttpService {
       async (error) => {
         const originalRequest = error.config;
 
-        if (originalRequest.url.includes('auth/logout') || originalRequest.url.includes('auth/refresh-token')) {
-    return Promise.reject(error);
-  }
         // If 401 (expired access token)
         if (error.response?.status === 401 && !originalRequest._retry) {
           originalRequest._retry = true;

@@ -2,6 +2,7 @@ import { toast } from "react-toastify";
 import { httpService } from "./HttpService"
 import { store } from "../store/store";
 import { clearCredentials, setCredentials } from "../store/authSlice";
+import { Params } from "next/dist/server/request/params";
 type LoginPayload = {
     email: string;
     password: string;
@@ -82,6 +83,19 @@ export const authService = {
             throw error;
 
         }
+    }
+    ,
+    getUserDataFromGoogle:  (params:any) => {
+        const email = params.email;
+        const name = params.name;
+        const role = params.role;
+
+        if (typeof email !== 'string' || typeof name !== 'string' || typeof role !== 'string') {
+            console.error('Invalid params received:', params);
+            return;
+        }
+
+         store.dispatch(setCredentials({email, name, role}));
     }
 
 

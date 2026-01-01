@@ -35,10 +35,10 @@ export const UserDropdown = () => {
 
         <Menu  >
 
-            {user?.email && <MenuButton className={' w-full cursor-pointer inline-flex items-center gap-2 focus:outline-white font-semibold'}>
+            {user && <MenuButton className={'  w-full cursor-pointer inline-flex items-center gap-2 focus:outline-white font-semibold'}>
                 {user.email}
                 <BiChevronDown className="size-5" />
-            </MenuButton>}
+            </MenuButton>} 
 
             <MenuItems 
                 transition

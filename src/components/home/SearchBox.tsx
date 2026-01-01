@@ -26,7 +26,7 @@ export const SearchBox = () => {
         <div className="rounded-lg flex items-center  flex-col lg:flex-row w-full bg-blue-800  p-5 select-none ">
 
             <div className={`${isOpen ? " z-50" : ""} relative bg-white  rounded-lg  mb-2 lg:mb-0  cursor-pointer`}>
-                <div className="flex items-center border p-3 rounded-lg lg:max-w-[300px] justify-between" onClick={() => setIsOpen(!isOpen)}>
+                <div className="flex items-center border px-3 py-1 rounded-lg lg:max-w-[300px] justify-between" onClick={() => setIsOpen(!isOpen)}>
                     <input onChange={()=>{}} className="font-medium focus:border-none border-none cursor-pointer outline-none" type="text" placeholder="Select Price"
                         value={startPrice !== 0 && endPrice !== 0 ? startPrice !== endPrice ? "Rs. " + startPrice + " - " + endPrice : "Rs. 10000+ " : ""} />
                     {!isOpen ? <FaChevronDown className="cursor-pointer text-blue-900" size={14} /> : <FaChevronUp className="cursor-pointer text-blue-900" size={14} />}
