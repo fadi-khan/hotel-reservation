@@ -123,7 +123,7 @@ export const useFormValidation = (schema, options = {}) => {
         return { success: true, data: result.data };
       } else {
         setErrors(result.errors);
-        if (onError) {
+        if (onError) { 
           onError(result.errors);
         }
         return { success: false, errors: result.errors };
