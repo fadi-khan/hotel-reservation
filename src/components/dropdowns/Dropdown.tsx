@@ -6,17 +6,18 @@ import { FaUser } from "react-icons/fa";
 
 
 interface DropDownMenuItem {
-    name: "",
+    name: React.ReactNode | string,
     className?: string,
-    icon: React.ReactNode,
-    link: string
+    icon?: React.ReactNode,
+    link?: string,
 
 }
 
 export const Dropdown = ({
-    menuItems, selectActive = false }: { menuItems: DropDownMenuItem[], selectActive?: boolean },
-    dropdownName: "Dropdown",
-    dropdwonIcon: React.ReactNode = <FaUser />
+    menuItems, selectActive = false, dropdownName = "Dropdown" }: {
+        menuItems: DropDownMenuItem[], selectActive?: boolean,
+        dropdownName?: string
+    },
 ) => {
 
 
@@ -36,16 +37,29 @@ export const Dropdown = ({
                 className={'shadow-2xl shadow-black z-40 bg-white gap-1  mt-3 py-2   flex flex-col rounded-lg text-blue-900   outline-none border border-blue-800 w-48'}>
                 {
                     menuItems.map((menuItem) => (
-                        <MenuItem >
-                            <button
-                                className={`cursor-pointer font-medium hover:px-4 transition-all duration-150 ease-out px-3 group flex  py-1 items-center gap-x-2 w-full ${menuItem?.className}`}>
-                                {menuItem.name}
-                                <Link href={menuItem.link}> Profile</Link>
-                            </button>
-                        </MenuItem>
-                    )
 
-                    )
+                        menuItem.link ?
+
+                            <MenuItem as={'link'} href={menuItem.link} >
+
+                                <button
+                                    className={`cursor-pointer font-medium hover:px-4 transition-all duration-150 ease-out px-3 group flex  py-1 items-center gap-x-2 w-full ${menuItem?.className}`}>
+                                    {menuItem.name}
+                                    {menuItem.icon && menuItem.icon}
+                                </button>
+
+                            </MenuItem>
+
+                            :
+                            <MenuItem
+                                className={`cursor-pointer font-medium hover:px-4 transition-all duration-150 ease-out px-3 group flex  py-1 items-center gap-x-2 w-full ${menuItem?.className}`}
+                                as="div"  >
+                                {menuItem.icon && menuItem.icon}
+                                {menuItem.name}
+
+                            </MenuItem>
+
+                    ))
                 }
 
             </MenuItems>

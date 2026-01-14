@@ -1,6 +1,7 @@
 import { MainHeader } from "@/components/headers/MainHeader";
 import { MobileSideBar } from "@/components/sidebars/MobileSidebar";
 import { ToastProvider } from "@/components/toasts/ToastProvider";
+import { RoomWizard } from "@/components/wizards/RoomWizard";
 import ReduxProvider from "@/lib/Providers/ReduxProvider";
 import { Sidebar, SidebarItem } from "flowbite-react";
 import Link from "next/link";
@@ -15,6 +16,7 @@ export const LayoutWrapper  = ({ children }: { children: React.ReactNode })=>{
         <MobileSideBar isOpen={isOpen} setIsOpen={setIsOpen}/>
         <ToastProvider />
             {children}
+            <RoomWizard />
         </ReduxProvider>
     )
 }

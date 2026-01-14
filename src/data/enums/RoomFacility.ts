@@ -6,10 +6,11 @@ export enum RoomFacility{
     KITCHEN="Kitchen",
     GYM="Gym",
     LIFT="Lift",
-    SWIMMING_POOL="Swimming Pool",
+   
     LAUNDRY="Laundry",
     PARKING="Parking",
     MINI_BAR="Mini Bar",
+     SWIMMING_POOL="Swimming Pool",
     
 
     

@@ -35,14 +35,21 @@ export const useModalStore = create<ModalStore>((set, get) => ({
   }
 }));
 
-// Generic hook that works for any modal
 export const useModal = (modalName: ModalName) => {
-  const { openModal, closeModal, setModalState, isModalOpen } = useModalStore();
+  // 1. Subscribe to the specific modal state using a selector
+  // This is the "magic" that makes the component re-render when the state changes
+  const isOpen = useModalStore((state) => state.modals[modalName] || false);
   
+  // 2. Grab the actions (these don't change, so no selector needed)
+  const openModal = useModalStore((state) => state.openModal);
+  const closeModal = useModalStore((state) => state.closeModal);
+  const setModalState = useModalStore((state) => state.setModalState);
+
   return useMemo(() => ({
-    isOpen: isModalOpen(modalName),
+    isOpen, // Now this will correctly toggle between true/false
     open: () => openModal(modalName),
     close: () => closeModal(modalName),
     setState: (isOpen: boolean) => setModalState(modalName, isOpen)
-  }), [modalName, openModal, closeModal, setModalState, isModalOpen]);
+  }), [isOpen, modalName, openModal, closeModal, setModalState]);
 };
+

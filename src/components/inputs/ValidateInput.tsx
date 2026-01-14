@@ -1,12 +1,38 @@
 import { Description, Field, Input, Label } from "@headlessui/react"
 
-export const ValidateInput = ({ }) => {
+
+export const ValidateInput = ({ 
+    value,
+    onChange,
+    onBlur,
+    error,
+    name,
+    label
+
+
+}) => {
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        onChange(name, e.target.value);
+    };
+
+    const handleInputBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+        onBlur(name);
+    };
+
     return (
-        <div className="w-full max-w-md px-4 text-black">
-            <Field>
-                <Label className="text-sm/6 font-medium ">Name</Label>
-                <Input className={'mt-2 block w-full rounded-md   px-3 py-1.5  text-sm/6 focus:outline-2 focus:outline-blue-900'} />
-                <Label className="text-sm/6 font-medium  text-red-500 ">Error will go here</Label>
+        <div className="w-full flex  text-black mt-2">
+            <Field className={'w-full'}>
+                <Label className="text-sm/6 text-blue-900 font-medium ">{label}</Label>
+                <Input 
+                
+                value={value}
+                onChange={handleInputChange}
+                onBlur={handleInputBlur}
+                name={name} 
+                className={'mt-2 block w-full border rounded-sm  border-blue-800  focus:outline-2!  px-3 py-1.5  text-sm/6  focus:outline-blue-900'} />
+                <Label className="text-sm/6 font-small h-4 font-bold  text-red-500 ">
+                {error && error}
+                </Label>
 
             </Field>
         </div>
