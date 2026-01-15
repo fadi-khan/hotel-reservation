@@ -139,6 +139,9 @@ export const RoomWizard = ({ mode = "create" }) => {
     const handleRoomSubmit = (e: React.FormEvent<HTMLFormElement>) => {
 
         e.preventDefault();
+
+        if (!validateCurrentStep(selectedIndex)) return;
+
         createMutation.mutate(formData, {
             onSuccess: () => {
                 resetForm()
