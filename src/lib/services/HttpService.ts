@@ -83,6 +83,13 @@ class HttpService {
     return this.axios.post(url, body);
   }
 
+  update(url:string, id:number, body?: any){
+    return this.axios.patch(`${url}/${id}`, body)
+  }
+  delete(url:string, id:number){
+    return this.axios.delete(`${url}/${id}`)
+  }
+
   isLoggedIn(): boolean {
     return !!localStorage.getItem("user");
   }

@@ -20,6 +20,7 @@ import { object } from "yup";
 import { BedType } from "@/data/enums/BedType";
 import { RoomType } from "@/data/enums/RoomType";
 import { FaDeskpro } from "react-icons/fa6";
+import { useRoomCreateQuery } from "@/lib/hooks/useRoomQueries";
 export const RoomWizard = ({ mode = "create" }) => {
     const {
         handleChange,
@@ -46,6 +47,7 @@ export const RoomWizard = ({ mode = "create" }) => {
         })
     const { isOpen, open, close } = useModal('room')
     const [selectedIndex, setSelectedIndex] = useState(0)
+    const createMutation = useRoomCreateQuery()
 
 
     const handleTabChange = (index: number) => {
@@ -134,8 +136,16 @@ export const RoomWizard = ({ mode = "create" }) => {
     }
 
 
-    const onSubmit = () => {
+    const handleRoomSubmit = (e: React.FormEvent<HTMLFormElement>) => {
 
+        e.preventDefault();
+        createMutation.mutate(formData, {
+            onSuccess: () => {
+                resetForm()
+                close()
+                setSelectedIndex(0)
+            }
+        })
     }
     return (
 
@@ -177,178 +187,189 @@ export const RoomWizard = ({ mode = "create" }) => {
                             })}
 
                         </TabList>
-                        <TabPanels className={'mt-8 min-w-full      '}>
-                            <TabPanel className={''}>
-                                <Fieldset className={'px-4 gap-4 grid lg:grid-cols-2   w-full '}>
-                                    <ValidateInput
-                                        value={formData.roomNo}
-                                        onChange={handleChange}
-                                        onBlur={handleBlur}
-                                        error={hasFieldError('roomNo') ? getFieldError('roomNo') : undefined}
-                                        name="roomNo"
-                                        label="Room No *"
-                                    />
+                        <form onSubmit={handleRoomSubmit}>
+                            <TabPanels className={'mt-8 min-w-full      '}>
+                                <TabPanel className={''}>
+                                    <Fieldset className={'px-4 gap-4 grid lg:grid-cols-2   w-full '}>
+                                        <ValidateInput
+                                            value={formData.roomNo}
+                                            onChange={handleChange}
+                                            onBlur={handleBlur}
+                                            error={hasFieldError('roomNo') ? getFieldError('roomNo') : undefined}
+                                            name="roomNo"
+                                            label="Room No *"
+                                        />
 
-                                    <ValidateInput
-                                        value={formData.price}
-                                        onChange={handleChange}
-                                        onBlur={handleBlur}
-                                        error={hasFieldError('price') ? getFieldError('price') : undefined}
-                                        name="price"
-                                        label={'Price *'}
-                                    />
+                                        <ValidateInput
+                                            value={formData.price}
+                                            onChange={handleChange}
+                                            onBlur={handleBlur}
+                                            error={hasFieldError('price') ? getFieldError('price') : undefined}
+                                            name="price"
+                                            label={'Price *'}
+                                        />
 
-                                    <ValidateInput
-                                        value={formData.discountedPrice}
-                                        onChange={handleChange}
-                                        onBlur={handleBlur}
-                                        error={hasFieldError('discountedPrice') ? getFieldError('discountedPrice') : undefined}
-                                        name="discountedPrice"
-                                        label={'Discounted Price'}
-                                    />
-                                    <SelectDropDown
-                                        name={'status'}
-                                        label={'Status'}
-                                        options={statusOptions}
-                                        onChange={handleChange}
-                                        onBlur={handleBlur}
-                                        error={hasFieldError('status') ? getFieldError('status') : undefined}
+                                        <ValidateInput
+                                            value={formData.discountedPrice}
+                                            onChange={handleChange}
+                                            onBlur={handleBlur}
+                                            error={hasFieldError('discountedPrice') ? getFieldError('discountedPrice') : undefined}
+                                            name="discountedPrice"
+                                            label={'Discounted Price'}
+                                        />
+                                        <SelectDropDown
+                                            name={'status'}
+                                            label={'Status'}
+                                            options={statusOptions}
+                                            onChange={handleChange}
+                                            onBlur={handleBlur}
+                                            error={hasFieldError('status') ? getFieldError('status') : undefined}
 
-                                    />
+                                        />
 
-                                </Fieldset>
+                                    </Fieldset>
 
-                            </TabPanel>
-                            <TabPanel>
+                                </TabPanel>
+                                <TabPanel>
 
-                                <Fieldset className="px-4 gap-y-6 flex flex-col">
-                                    <Field as="div">
+                                    <Fieldset className="px-4 gap-y-6 flex flex-col">
+                                        <Field as="div">
 
-                                        <Legend className="text-lg  font-bold text-blue-900 ">Select Facilities </Legend>
-                                        <Description className={"text-sm/6 text-gray-500 mb-4 font-medium "}>Choose atleast one facility (Required) </Description>
-                                        <div className="grid lg:grid-cols-4  grid-cols-3 gap-y-3 gap-x-2">
-                                            {Object.values(RoomFacility).map((facility) => {
-                                                const Icon = facilityIcons[facility];
-                                                return (
-                                                    <Field
+                                            <Legend className="text-lg  font-bold text-blue-900 ">Select Facilities </Legend>
+                                            <Description className={"text-sm/6 text-gray-500 mb-4 font-medium "}>Choose atleast one facility (Required) </Description>
+                                            <div className="grid lg:grid-cols-4  grid-cols-3 gap-y-3 gap-x-2">
+                                                {Object.values(RoomFacility).map((facility) => {
+                                                    const Icon = facilityIcons[facility];
+                                                    return (
+                                                        <Field
 
-                                                        key={facility} className="flex items-center  last:col-span-2">
-                                                        <Checkbox
-                                                            value={facility}
-                                                            // onBlur={() => { handleBlur('facilities') }}
-                                                            checked={formData.facilities?.includes(facility) || false}
-                                                            onChange={(checked) => handleFacilityChange(facility, checked)}
-                                                            className="group focus:ring-0 min-w-4 relative flex size-4 cursor-pointer rounded border-2 border-blue-800 bg-white data-checked:bg-blue-800 data-checked:border-blue-800 focus:ring-blue-900"
-                                                        >
-                                                            <svg
-                                                                className="pointer-events-none absolute inset-0 m-auto size-3 stroke-white opacity-0 group-data-checked:opacity-100"
-                                                                viewBox="0 0 14 14"
-                                                                fill="none"
+                                                            key={facility} className="flex items-center  last:col-span-2">
+                                                            <Checkbox
+                                                                value={facility}
+                                                                // onBlur={() => { handleBlur('facilities') }}
+                                                                checked={formData.facilities?.includes(facility) || false}
+                                                                onChange={(checked) => handleFacilityChange(facility, checked)}
+                                                                className="group focus:ring-0 min-w-4 relative flex size-4 cursor-pointer rounded border-2 border-blue-800 bg-white data-checked:bg-blue-800 data-checked:border-blue-800 focus:ring-blue-900"
                                                             >
-                                                                <path
-                                                                    d="M3 8L6 11L11 3"
-                                                                    strokeWidth="2"
-                                                                    strokeLinecap="round"
-                                                                    strokeLinejoin="round"
-                                                                />
-                                                            </svg>
-                                                        </Checkbox>
+                                                                <svg
+                                                                    className="pointer-events-none absolute inset-0 m-auto size-3 stroke-white opacity-0 group-data-checked:opacity-100"
+                                                                    viewBox="0 0 14 14"
+                                                                    fill="none"
+                                                                >
+                                                                    <path
+                                                                        d="M3 8L6 11L11 3"
+                                                                        strokeWidth="2"
+                                                                        strokeLinecap="round"
+                                                                        strokeLinejoin="round"
+                                                                    />
+                                                                </svg>
+                                                            </Checkbox>
 
-                                                        <Label className=" ml-2.5 text-sm text-blue-800 font-medium flex gap-1.5">
-                                                            {Icon && <Icon className="size-4 min-w-4 min-h-4" />}
-                                                            {facility}
-                                                        </Label>
-                                                    </Field>
-                                                );
-                                            })}
-                                        </div>
-                                        {hasFieldError('facilities') && (
-                                            <Label className="text-sm/6 font-small h-6 font-bold text-red-500 mt-2">
-                                                {getFieldError('facilities')}
-                                            </Label>
-                                        )}
+                                                            <Label className=" ml-2.5 text-sm text-blue-800 font-medium flex gap-1.5">
+                                                                {Icon && <Icon className="size-4 min-w-4 min-h-4" />}
+                                                                {facility}
+                                                            </Label>
+                                                        </Field>
+                                                    );
+                                                })}
+                                            </div>
+                                            {hasFieldError('facilities') && (
+                                                <Label className="text-sm/6 font-small h-6 font-bold text-red-500 mt-2">
+                                                    {getFieldError('facilities')}
+                                                </Label>
+                                            )}
 
-                                    </Field>
-
-
-                                </Fieldset>
-
-                                <Fieldset className="px-4  pt-6 flex lg:flex-row flex-col   justify-between lg:gap-x-16">
-                                    <Field as="div" className={''} >
-                                        <Legend className="text-lg  font-bold text-blue-900  ">Bed Size </Legend>
-                                        <Description className={"text-sm/6 text-gray-500 mb-4 font-medium "}>Choose bed size (Required) </Description>
-                                        <RadioGroup
-                                            className={'flex'}
-                                            onBlur={() => handleBlur('bedType')}
-                                            value={formData.bedType} onChange={(value) => handleChange('bedType', value)} aria-label="Bed Type">
-                                            {Object.values(BedType).map((plan) => {
-
-                                                const Icon = bedTypIcons[plan];
-                                                return (
-                                                    <Field key={plan} className={` ${formData.bedType == plan ? ' shadow-2xl shadow-blue-800 bg-blue-900 text-white scale-100' : 'bg-blue-900/50'} text-blue-900 font-medium  border-2 border-blue-900 w-full lg:w-fit duration-300 transition-all scale-95 ps-2 rounded  flex items-center gap-1 cursor-pointer `}>
-                                                        <Radio
-                                                            value={plan}
-                                                            className={`group flex min-h-4 min-w-4  size-4 items-center  border-2 ${formData.bedType == plan ? 'border-white ' : ' border-blue-900'}justify-center rounded-full  bg-white data-checked:bg-blue-900`}
-                                                        >
-                                                            <span className="invisible size-2 max-w-2 not-only-of-type: rounded-full bg-blue-900 group-data-checked:visible" />
-                                                        </Radio>
-                                                        <Label className={'cursor-pointer w-full  py-3  lg:py-6 lg:min-w-24 flex items-center'}>
-                                                            {plan}</Label>
-                                                    </Field>
-                                                )
-                                            })}
-                                        </RadioGroup>
-                                        {hasFieldError('bedType') && (
-                                            <Label className="text-sm/6 font-small h-6 font-bold text-red-500 mt-2">
-                                                {getFieldError('bedType')}
-                                            </Label>
-                                        )}
-                                    </Field>
-                                    <Field as="div" className={' lg:mt-0 pt-4 lg:pt-0  '} >
-                                        <Legend className="text-lg  font-bold text-blue-900  ">Room Type </Legend>
-                                        <Description className={"text-sm/6 text-gray-500 mb-4 font-medium  "}>Please make sure you choose the option that best suits price (Required)</Description>
-                                        <RadioGroup
-                                            className={'flex text-blue-900 font-medium'}
-                                            onBlur={() => handleBlur('roomType')}
-                                            value={formData.roomType} onChange={(value) => handleChange('roomType', value)} aria-label="Room Type">
-                                            {Object.values(RoomType).map((plan) => {
-
-                                                const Icon = roomTypeIcons[plan];
-                                                return (
-                                                    <Field key={plan} className={` ${formData.roomType == plan ? '  shadow-2xl shadow-blue-800 bg-blue-900 text-white scale-100' : 'bg-blue-900/50'}  border-2 text-blue-900 font-medium border-blue-900 w-full duration-300 transition-all scale-95 px-2 rounded  flex items-center gap-1 cursor-pointer `}>
-                                                        <Radio
-                                                            value={plan}
-                                                            className={`group flex size-4 min-w-4 min-h-4 items-center  justify-center rounded-full  bg-white data-checked:bg-blue-900 border-2 ${formData.roomType == plan ? 'border-white ' : ' border-blue-900'}`}
-                                                        >
-                                                            <span className="invisible size-2 min-h-2 max-w-2 rounded-full bg-blue-900 group-data-checked:visible" />
-                                                        </Radio>
-                                                        <Label className={'cursor-pointer py-3 w-full  lg:py-6 lg:min-w-24 flex items-center'}>
-
-                                                            {plan}</Label>
-                                                    </Field>
-                                                )
-                                            })}
-                                        </RadioGroup>
-                                        {hasFieldError('roomType') && (
-                                            <Label className="text-sm/6 font-small h-6 font-bold text-red-500 mt-2">
-                                                {getFieldError('roomType')}
-                                            </Label>
-                                        )}
-                                    </Field>
+                                        </Field>
 
 
-                                </Fieldset>
-                            </TabPanel>
-                            <div className="flex justify-between items-center  mx-4  my-10 mt-14">
-                                <Button
-                                    disabled={selectedIndex === 0}
-                                    className="cursor-pointer shadow-lg shadow-blue-900 min-w-28 gap-1 flex bg-blue-900!   focus:ring-0" onClick={prevStep}><ArrowLeftIcon className="size-4" /> Previous</Button>
-                                <Button className="cursor-pointer shadow-lg shadow-blue-900 min-w-28  gap-1 flex bg-blue-900!  focus:ring-0" onClick={nextStep}>Next <ArrowRightIcon className="size-4" /></Button>
+                                    </Fieldset>
 
-                            </div>
+                                    <Fieldset className="px-4  pt-6 flex lg:flex-row flex-col   justify-between lg:gap-x-16">
+                                        <Field as="div" className={''} >
+                                            <Legend className="text-lg  font-bold text-blue-900  ">Bed Size </Legend>
+                                            <Description className={"text-sm/6 text-gray-500 mb-4 font-medium "}>Choose bed size (Required) </Description>
+                                            <RadioGroup
+                                                className={'flex'}
+                                                onBlur={() => handleBlur('bedType')}
+                                                value={formData.bedType} onChange={(value) => handleChange('bedType', value)} aria-label="Bed Type">
+                                                {Object.values(BedType).map((plan) => {
+
+                                                    const Icon = bedTypIcons[plan];
+                                                    return (
+                                                        <Field key={plan} className={` ${formData.bedType == plan ? ' shadow-2xl shadow-blue-800 bg-blue-900 text-white scale-100' : 'bg-blue-900/50'} text-blue-900 font-medium  border-2 border-blue-900 w-full lg:w-fit duration-300 transition-all scale-95 ps-2 rounded  flex items-center gap-1 cursor-pointer `}>
+                                                            <Radio
+                                                                value={plan}
+                                                                className={`group flex min-h-4 min-w-4  size-4 items-center  border-2 ${formData.bedType == plan ? 'border-white ' : ' border-blue-900'}justify-center rounded-full  bg-white data-checked:bg-blue-900`}
+                                                            >
+                                                                <span className="invisible size-2 max-w-2 not-only-of-type: rounded-full bg-blue-900 group-data-checked:visible" />
+                                                            </Radio>
+                                                            <Label className={'cursor-pointer w-full  py-3  lg:py-6 lg:min-w-24 flex items-center'}>
+                                                                {plan}</Label>
+                                                        </Field>
+                                                    )
+                                                })}
+                                            </RadioGroup>
+                                            {hasFieldError('bedType') && (
+                                                <Label className="text-sm/6 font-small h-6 font-bold text-red-500 mt-2">
+                                                    {getFieldError('bedType')}
+                                                </Label>
+                                            )}
+                                        </Field>
+                                        <Field as="div" className={' lg:mt-0 pt-4 lg:pt-0  '} >
+                                            <Legend className="text-lg  font-bold text-blue-900  ">Room Type </Legend>
+                                            <Description className={"text-sm/6 text-gray-500 mb-4 font-medium  "}>Please make sure you choose the option that best suits price (Required)</Description>
+                                            <RadioGroup
+                                                className={'flex text-blue-900 font-medium'}
+                                                onBlur={() => handleBlur('roomType')}
+                                                value={formData.roomType} onChange={(value) => handleChange('roomType', value)} aria-label="Room Type">
+                                                {Object.values(RoomType).map((plan) => {
+
+                                                    const Icon = roomTypeIcons[plan];
+                                                    return (
+                                                        <Field key={plan} className={` ${formData.roomType == plan ? '  shadow-2xl shadow-blue-800 bg-blue-900 text-white scale-100' : 'bg-blue-900/50'}  border-2 text-blue-900 font-medium border-blue-900 w-full duration-300 transition-all scale-95 px-2 rounded  flex items-center gap-1 cursor-pointer `}>
+                                                            <Radio
+                                                                value={plan}
+                                                                className={`group flex size-4 min-w-4 min-h-4 items-center  justify-center rounded-full  bg-white data-checked:bg-blue-900 border-2 ${formData.roomType == plan ? 'border-white ' : ' border-blue-900'}`}
+                                                            >
+                                                                <span className="invisible size-2 min-h-2 max-w-2 rounded-full bg-blue-900 group-data-checked:visible" />
+                                                            </Radio>
+                                                            <Label className={'cursor-pointer py-3 w-full  lg:py-6 lg:min-w-24 flex items-center'}>
+
+                                                                {plan}</Label>
+                                                        </Field>
+                                                    )
+                                                })}
+                                            </RadioGroup>
+                                            {hasFieldError('roomType') && (
+                                                <Label className="text-sm/6 font-small h-6 font-bold text-red-500 mt-2">
+                                                    {getFieldError('roomType')}
+                                                </Label>
+                                            )}
+                                        </Field>
 
 
-                        </TabPanels>
+                                    </Fieldset>
+                                </TabPanel>
+                                <div className="flex justify-between items-center  mx-4  my-10 mt-14">
+                                    <Button
+                                        disabled={selectedIndex === 0}
+                                        className="cursor-pointer shadow-lg shadow-blue-900 min-w-28 gap-1 flex bg-blue-900!   focus:ring-0" onClick={prevStep}><ArrowLeftIcon className="size-4" /> Previous</Button>
+                                    <Button
+                                        type={selectedIndex === 0 ? "button" : "submit"}
+                                        className="cursor-pointer shadow-lg shadow-blue-900 min-w-28  gap-1 flex bg-blue-900!  focus:ring-0" onClick={nextStep}>
+                                        {selectedIndex === tabs.length - 1 ? (
+                                            createMutation.isPending ? "Creating..." : "Submit"
+                                        ) : (
+                                            "Next"
+                                        )} <ArrowRightIcon className="size-4" />
+                                    </Button>
+
+                                </div>
+
+
+                            </TabPanels>
+
+                        </form>
 
                     </TabGroup>
 
