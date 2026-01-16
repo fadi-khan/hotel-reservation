@@ -16,7 +16,7 @@ import { TbAirConditioning, TbElevator, TbElevatorFilled } from "react-icons/tb"
 import { GiBarrel, GiLift } from "react-icons/gi";
 import { BiTv } from "react-icons/bi";
 import { RiTvFill, RiWifiFill } from "react-icons/ri";
-import { object } from "yup";
+import { number, object } from "yup";
 import { BedType } from "@/data/enums/BedType";
 import { RoomType } from "@/data/enums/RoomType";
 import { FaDeskpro } from "react-icons/fa6";
@@ -37,7 +37,7 @@ export const RoomWizard = ({ mode = "create" }) => {
             initialValues: {
                 roomNo: '',
                 status: RoomStatus.AVAILABLE,
-                price: null,
+                price: undefined,
                 discountedPrice: null,
                 bedType: '',
                 facilities: [],
@@ -141,6 +141,7 @@ export const RoomWizard = ({ mode = "create" }) => {
         e.preventDefault();
 
         if (!validateCurrentStep(selectedIndex)) return;
+
 
         createMutation.mutate(formData, {
             onSuccess: () => {
@@ -246,7 +247,7 @@ export const RoomWizard = ({ mode = "create" }) => {
                                                     return (
                                                         <Field
 
-                                                            key={facility} className="flex items-center  last:col-span-2">
+                                                            key={facility} className="  flex items-center  last:col-span-2">
                                                             <Checkbox
                                                                 value={facility}
                                                                 // onBlur={() => { handleBlur('facilities') }}
@@ -268,7 +269,7 @@ export const RoomWizard = ({ mode = "create" }) => {
                                                                 </svg>
                                                             </Checkbox>
 
-                                                            <Label className=" ml-2.5 text-sm text-blue-800 font-medium flex gap-1.5">
+                                                            <Label className="w-full cursor-pointer  ml-2.5 text-sm text-blue-800 font-medium flex gap-1.5">
                                                                 {Icon && <Icon className="size-4 min-w-4 min-h-4" />}
                                                                 {facility}
                                                             </Label>
@@ -299,7 +300,7 @@ export const RoomWizard = ({ mode = "create" }) => {
 
                                                     const Icon = bedTypIcons[plan];
                                                     return (
-                                                        <Field key={plan} className={` ${formData.bedType == plan ? ' shadow-2xl shadow-blue-800 bg-blue-900 text-white scale-100' : 'bg-blue-900/50'} text-blue-900 font-medium  border-2 border-blue-900 w-full lg:w-fit duration-300 transition-all scale-95 ps-2 rounded  flex items-center gap-1 cursor-pointer `}>
+                                                        <Field key={plan} className={`has-data-checked:shadow-2xl has-data-checked:shadow-blue-800 has-data-checked:bg-blue-900 has-data-checked:text-white has-data-checked:scale-100 bg-blue-900/50 text-blue-900 font-medium  border-2 border-blue-900 w-full lg:w-fit duration-300 transition-all scale-95 ps-2 rounded  flex items-center gap-1 cursor-pointer `}>
                                                             <Radio
                                                                 value={plan}
                                                                 className={`group flex min-h-4 min-w-4  size-4 items-center  border-2 ${formData.bedType == plan ? 'border-white ' : ' border-blue-900'}justify-center rounded-full  bg-white data-checked:bg-blue-900`}
@@ -329,7 +330,7 @@ export const RoomWizard = ({ mode = "create" }) => {
 
                                                     const Icon = roomTypeIcons[plan];
                                                     return (
-                                                        <Field key={plan} className={` ${formData.roomType == plan ? '  shadow-2xl shadow-blue-800 bg-blue-900 text-white scale-100' : 'bg-blue-900/50'}  border-2 text-blue-900 font-medium border-blue-900 w-full duration-300 transition-all scale-95 px-2 rounded  flex items-center gap-1 cursor-pointer `}>
+                                                        <Field key={plan} className={`has-data-checked:shadow-2xl has-data-checked:shadow-blue-800 has-data-checked:bg-blue-900 has-data-checked:text-white has-data-checked:scale-100  bg-blue-900/50  border-2 text-blue-900 font-medium border-blue-900 w-full duration-300 transition-all scale-95 px-2 rounded  flex items-center gap-1 cursor-pointer `}>
                                                             <Radio
                                                                 value={plan}
                                                                 className={`group flex size-4 min-w-4 min-h-4 items-center  justify-center rounded-full  bg-white data-checked:bg-blue-900 border-2 ${formData.roomType == plan ? 'border-white ' : ' border-blue-900'}`}
