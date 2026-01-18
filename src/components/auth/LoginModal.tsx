@@ -31,7 +31,7 @@ export const LoginModal = () => {
 
     const handleGoogleLogin = () => {
         // Direct redirect to NestJS to initiate OAuth flow
-        window.location.href = process.env.GOOGLE_CALLBACK_URL || "http://localhost:3001/auth/google";
+        window.location.href = process.env.NEXT_PUBLIC_GOOGLE_CALLBACK_URL|| "http://localhost:3001/auth/google";
     };
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault()
