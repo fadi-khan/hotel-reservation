@@ -3,6 +3,7 @@
 @source "../../.flowbite-react/class-list.json";
 @import "react-datepicker/dist/react-datepicker.css";
 @import "./css/reactDatePicker.css";
+@import "react-toastify/dist/ReactToastify.css";
 
 @keyframes subtle-ring {
   0%, 100% { opacity: 0.55; transform: scale(1); }

@@ -1,6 +1,15 @@
 import { Description, Field, Input, Label } from "@headlessui/react"
 
+interface ValidateInputProps {
+    value: string;
+    label: string;
+    onChange: (name: string, value: string) => void;
+    onBlur: (name: string) => void;
+    name: string;
+    error:string|undefined;
 
+    
+}
 export const ValidateInput = ({ 
     value,
     onChange,
@@ -10,7 +19,7 @@ export const ValidateInput = ({
     label
 
 
-}) => {
+}:ValidateInputProps) => {
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         onChange(name, e.target.value);
     };

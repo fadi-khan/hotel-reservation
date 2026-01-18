@@ -13,7 +13,7 @@ if (typeof window !== 'undefined') {
 class HttpService {
   private axios: AxiosInstance;
   private isRefreshing = false;
-  private refreshSubscribers: ((token: string) => void)[] = [];
+  private refreshSubscribers: (() => void)[] = [];
 
   constructor() {
     this.axios = axios.create({
@@ -32,46 +32,55 @@ class HttpService {
       async (error) => {
         const originalRequest = error.config;
 
-        // If 401 (expired access token)
+        // 1. Check if the error is 401 and we haven't retried this specific request yet
         if (error.response?.status === 401 && !originalRequest._retry) {
           originalRequest._retry = true;
 
-          // Avoid calling refresh API multiple times
           if (!this.isRefreshing) {
             this.isRefreshing = true;
-            try {
-              const { data } = await this.axios.post("/auth/refresh-token");
 
+            try {
+              // 2. This call must hit the backend to get a NEW access token cookie
+              await axios.post(`${baseUrl}/auth/refresh-token`, {}, { withCredentials: true });
+              
               this.isRefreshing = false;
-              this.onRefreshed(data.access_token);
-            } catch (err) {
+              this.onRefreshed(); 
+            } catch (refreshError) {
               this.isRefreshing = false;
-              localStorage.removeItem("user") 
-              return Promise.reject(err);
+              return Promise.reject(refreshError);
             }
           }
 
-          // Queue the request until refresh finishes
-          return new Promise((resolve) => {
-            this.subscribeTokenRefresh((token: string) => {
-              originalRequest.headers.Authorization = "Bearer " + token;
-              resolve(this.axios(originalRequest));
-            });
-          });
-        }
+          // 3. Queue the original request until the refresh is complete
+         return new Promise((resolve, reject) => {
+  this.subscribeTokenRefresh(() => {
+    // Force the retry to use the new cookies by creating a clean config
+    // Sometimes originalRequest needs its headers explicitly cleaned if they were cached
+    const retryConfig = {
+      ...originalRequest,
+      // Ensure we don't carry over any internal axios 'already retried' flags
+      _retry: true 
+    };
 
+    // IMPORTANT: Use the instance (this.axios) but ensure you RETURN the result
+    this.axios(retryConfig)
+      .then(resolve)
+      .catch(reject);
+  });
+});
+        }
         return Promise.reject(error);
       }
     );
   }
 
   // helpers
-  private subscribeTokenRefresh(cb: (token: string) => void) {
+  private subscribeTokenRefresh(cb: () => void) {
     this.refreshSubscribers.push(cb);
   }
 
-  private onRefreshed(token: string) {
-    this.refreshSubscribers.forEach((cb) => cb(token));
+  private onRefreshed() {
+    this.refreshSubscribers.forEach((cb) => cb());
     this.refreshSubscribers = [];
   }
 

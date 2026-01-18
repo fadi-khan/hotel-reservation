@@ -1,15 +1,27 @@
 import { Field, Label, Select } from '@headlessui/react'
 
-export function SelectDropDown(
-    {
-        name,
-        label,
-        options,
-        onChange,
-        onBlur,
-        error
-    }
-) {
+interface SelectOption {
+    value: string;
+    label: string;
+}
+
+interface SelectDropDownProps {
+    name: string;
+    label: string;
+    options: SelectOption[];
+    onChange: (name: string, value: string) => void;
+    onBlur: (name: string) => void;
+    error?: string;
+}
+
+export function SelectDropDown({
+    name,
+    label,
+    options,
+    onChange,
+    onBlur,
+    error
+}: SelectDropDownProps) {
 
     const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         onChange(name, e.target.value);
@@ -27,19 +39,19 @@ export function SelectDropDown(
                 onChange={handleChange}
                 onBlur={handleBlur}
                 name={name}>
-        
-              
-                     {
+
+
+                {
                     options.map((option, index) => (
-                      
-                        <option  className='rounded-lg hover:bg-blue-800 text-blue-900' key={index} value={option.value}>
+
+                        <option className='rounded-lg hover:bg-blue-800 text-blue-900' key={index} value={option.value}>
                             {option.label}
                         </option>
-                        
+
                     ))
                 }
 
-              
+
             </Select>
             <Label className="text-sm/6 font-small  h-6 font-bold  text-red-500 ">
                 {error && error}

@@ -1,21 +1,33 @@
 "use client"
 
-import {  Dialog, DialogBackdrop, DialogPanel, DialogTitle, Field, Input, Label } from "@headlessui/react"
+import { Dialog, DialogBackdrop, DialogPanel, DialogTitle, Field, Input, Label } from "@headlessui/react"
 import { useLoginModalStore } from "./store/loginModalStore"
 import Image from "next/image"
-import { MdClose } from "react-icons/md"
-import { FaGoogle } from "react-icons/fa"
+import { MdClose, MdEmail, MdPassword } from "react-icons/md"
+import { FaEye, FaGoogle } from "react-icons/fa"
 import { useState } from "react"
 import { authService } from "@/lib/services/auth"
 import { OtpModal } from "./OtpModal"
 import { Button } from "flowbite-react"
+import { GoogleIcon } from "@/app/icons/GoogleIcon"
+import { useFormValidation } from "@/lib/validations/hooks/useFormValidation"
+import { loginValidationSchema } from "@/lib/validations/schemas/loginValidations"
+import { IoEye, IoEyeOff } from "react-icons/io5"
 
 export const LoginModal = () => {
 
     const { openLoginModal, closeLoginModal, loginModalOpen } = useLoginModalStore()
-    const [email, setEmail] = useState("")
-    const [password, setPassword] = useState("")
+    const [showPassword, setShowPassword] = useState(false)
     const [showOTP, setShowOTP] = useState(false)
+
+    const { handleBlur, handleSubmit, handleChange, values: formData, errors, isSubmitting, touched, resetForm, getFieldError, hasFieldError } =
+        useFormValidation(loginValidationSchema, {
+            initialValues: {
+                email: '',
+                password: '',
+
+            }
+        })
 
     const handleGoogleLogin = () => {
         // Direct redirect to NestJS to initiate OAuth flow
@@ -23,10 +35,22 @@ export const LoginModal = () => {
     };
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault()
-        const response = await authService.login({ password, email })
-        if (response?.data.mfaRequired == true) {
-            setShowOTP(true)
-        }
+
+        const result = await handleSubmit(
+            async (validatedData: { email: string; password: string }) => {
+                const response = await authService.login({
+                    password: validatedData.password,
+                    email: validatedData.email
+                })
+
+                if (response?.data.mfaRequired == true) {
+                    setShowOTP(true)
+                }
+            },
+            (errors: Record<string, string>) => {
+                console.error('Validation errors:', errors)
+            }
+        )
     }
     const handleModalClose = () => {
         closeLoginModal()
@@ -48,7 +72,7 @@ export const LoginModal = () => {
                 <div className="fixed inset-0 flex w-screen items-center justify-center ">
                     <DialogPanel
 
-                        className={"rounded-lg pb-10 min-w-sm border border-blue-900 shadow shadow-black bg-white/30 px-8 py-2 backdrop-blur-2xl duration-300 ease-out data-closed:transform-[scale(95%)] data-[closed]::opacity-0 "}>
+                        className={"rounded pb-10 min-w-sm border border-blue-900 shadow shadow-black bg-white px-8 py-2  duration-300 ease-out data-closed:transform-[scale(95%)] data-closed:opacity-0 "}>
                         <DialogTitle className={"w-full flex justify-between items-center gap-4"}>
                             <Image src="/logos/logo.png" alt="logo" height={55} width={55} />
                             <MdClose size={25} onClick={handleModalClose} className="cursor-pointer text-blue-900  " />
@@ -59,29 +83,57 @@ export const LoginModal = () => {
                                 <form onSubmit={handleLogin} className=" flex flex-col items-center mt-6 justify-center gap-y-6">
                                     <Field className={"flex-col flex w-full "}>
                                         <Label className={"font-medium  text-blue-900"}>Email</Label>
-                                        <Input
-                                            value={email}
-                                            onChange={(e) => setEmail(e.target.value)}
-                                            placeholder="Enter you email" required type="email" className={"bg-white   rounded p-2 px-3 focus:outline-blue-900"}></Input>
+                                        <div className="flex px-3 items-center border border-blue-900 bg-white rounded transition focus-within:ring-2 focus-within:ring-blue-900 focus-within:border-blue-900">
+                                            <Input
+                                                value={formData.email}
+                                                onBlur={() => handleBlur('email')}
+                                                onChange={(e) => handleChange("email", e.target.value)}
+                                                placeholder="Enter you email" required type="email"
+                                                className={"w-full border-none  p-2  "}>
+
+                                            </Input>
+                                            <MdEmail className="text-blue-900" size={20} />
+                                        </div>
+                                        <Label className={"text-red-500 text-sm font-medium mt-1"}>{hasFieldError('email') && getFieldError('email')}</Label>
+
                                     </Field>
 
                                     <Field className={"flex-col flex w-full "}>
                                         <Label className={"font-medium text-blue-900"}>Password</Label>
-                                        <Input value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Enter your password" required type="password" className={"bg-white  rounded p-2 px-3  focus:outline-blue-900"}></Input>
+                                        <div className="flex px-3 items-center border border-blue-900 bg-white rounded transition focus-within:ring-2 focus-within:ring-blue-900 focus-within:border-blue-900">
+
+                                            <Input
+                                                name="password"
+                                                onBlur={(e) => handleBlur('password')}
+                                                value={formData.password}
+                                                onChange={(e) => handleChange("password", e.target.value)} placeholder="Enter your password" required
+                                                type={showPassword ? "text" : "password"}
+                                                className={"border-none p-2 w-full"}></Input>
+                                            <span className="text-blue-900 cursor-pointer" onClick={() => setShowPassword((value) => !value)}>
+                                                {showPassword ? <IoEye size={20} /> : <IoEyeOff size={20} />}
+                                            </span>
+                                        </div>
+                                        <Label className={"text-red-500 text-sm font-medium mt-1"}>{hasFieldError('password') && getFieldError('password')}</Label>
+
+                                        <label className="w-full text-end text-sm font-bold text-blue-800  pt-1 cursor-pointer ps-0.5">Forget Password </label>
                                     </Field>
 
-                                    <Input className={"w-full bg-blue-800 text-white py-3 hover:bg-blue-900/90 px-3 rounded-lg mt-3 font-medium cursor-pointer"} type="submit" name="Login" value="Send OTP"></Input>
+
+                                    <Input disabled={isSubmitting === true}
+                                        className={"w-full  bg-blue-900/95 text-white  py-3 hover:bg-blue-900 px-3 rounded-lg mt-3 font-medium cursor-pointer"}
+                                        type="submit" name="Login" value={isSubmitting === true ? "Sending..." : "Send OTP"}></Input>
                                 </form>
                                 :
-                                <OtpModal email={email} />
+                                <OtpModal email={formData.email} />
                         }
 
-                        <hr className=" mt-12 mb-4 text-blue-900 h-[2px] bg-blue-900 " />
+                        <div className="w-full flex items-center justify-center gap-2  text-blue-900 font-medium                       mt-6">
+                            <hr className=" border-blue-800  w-full " /> OR <hr className="  border-blue-800 w-full  " /> </div>
 
                         <Button
                             onClick={handleGoogleLogin}
-                            className={"items-center flex justify-center mt-8 gap-2  rounded-lg cursor-pointer bg-orange-700! hover:bg-orange-800! text-white w-full py-3 px-3"}>
-                            <FaGoogle size={16} /> <span>Login with Google</span>
+                            className={"items-center flex justify-center mt-8 mb-4 gap-2  rounded-lg cursor-pointer hover:ring-1 hover:ring-blue-900 focus:ring-1! focus:ring-orange-700!  bg-white! shadow-2xl shadow-gray-800 text-black! w-full py-6! px-3"}>
+                            <GoogleIcon height={20} width={20} /> <span>Login with Google</span>
                         </Button>
 
 

@@ -1,16 +1,22 @@
 "use client"
 
-import { ToastContainer } from "react-toastify"
+import { Slide, ToastContainer } from "react-toastify"
+import "react-toastify/dist/ReactToastify.css"
 
 export const ToastProvider = () => {
+
+
   return (
     <ToastContainer
-      closeButton={true}
       position="top-center"
-      newestOnTop={true}
+      newestOnTop
       autoClose={3000}
-      pauseOnHover={true}
+      transition={Slide}
+      pauseOnHover
       draggable
+      
+      closeButton={true}
+      className={"text-blue-900"}
     />
   )
 }
