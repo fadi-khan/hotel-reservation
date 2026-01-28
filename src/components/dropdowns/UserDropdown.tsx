@@ -1,6 +1,5 @@
 import { authService } from "@/lib/services/auth";
 import { clearCredentials } from "@/lib/store/authSlice";
-import { store } from "@/lib/store/store";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react"
 import Link from "next/link";
 import {  useState } from "react"

@@ -41,7 +41,7 @@ class HttpService {
 
             try {
               // 2. This call must hit the backend to get a NEW access token cookie
-              await axios.post(`${baseUrl}/auth/refresh-token`, {}, { withCredentials: true });
+              await this.axios.post('/auth/refresh-token', {}, { withCredentials: true });
               
               this.isRefreshing = false;
               this.onRefreshed(); 

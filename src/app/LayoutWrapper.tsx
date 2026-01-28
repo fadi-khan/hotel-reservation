@@ -18,7 +18,7 @@ export const LayoutWrapper = ({ children }: { children: React.ReactNode }) => {
                 <MobileSideBar isOpen={isOpen} setIsOpen={setIsOpen} />
                 <ToastProvider />
                 {children}
-                <RoomWizard />
+                <div className="hidden"><RoomWizard /></div>
             </ReduxProvider>
         </QueryProvider>
 

@@ -3,7 +3,7 @@ import { httpService } from "../services/HttpService"
 import { roomService } from "../services/room"
 import { queryOptions } from "../utilities/queryOptions"
 
-export const useRoomsQuery = (filters: any) => {
+export const useRoomsQuery = (filters?: any) => {
     return useQuery(
         queryOptions(
             ["rooms", JSON.stringify(filters)],

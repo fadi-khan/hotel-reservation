@@ -61,7 +61,7 @@ export const LoginModal = () => {
     return (
 
         <>
-            <Button onClick={openLoginModal} className='bg-blue-900! cursor-pointer hover:bg-blue-800!'>Login</Button>
+            <Button onClick={openLoginModal} className='bg-blue-900! active:outline-none! active:ring-0! focus:outline-0! focus:ring-0!  cursor-pointer hover:bg-blue-800!'>Login</Button>
 
             <Dialog open={loginModalOpen} onClose={handleModalClose} as="div" transition
                 className={"relative z-30 rounded-2xl"}

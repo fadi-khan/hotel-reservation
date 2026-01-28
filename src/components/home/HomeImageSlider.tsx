@@ -56,7 +56,7 @@ export const HomeImageSlider = () => {
       {/* Viewport: This defines the visible area. 
          'overflow-hidden' hides the slides that are off-screen. 
       */}
-      <div className="relative h-64 md:h-96 w-full overflow-hidden ">
+      <div className="relative h-64 md:h-64 w-full overflow-hidden ">
         
         {/* Sliding Track: This inner div holds all images side-by-side.
            We move this entire track using translateX.
